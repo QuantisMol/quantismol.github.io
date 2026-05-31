@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantisMol — Quantitative Molecular Science for Drug Discovery</title>
+<meta name="description" content="QuantisMol develops computational tools and predictive models for drug discovery, spanning small molecules and oligonucleotide therapeutics.">
+<meta property="og:title" content="QuantisMol — AI-Powered ADMET Intelligence">
+<meta property="og:description" content="Computational tools for ADMET prediction, molecular property assessment, and translational decision support in drug discovery.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='none' stroke='%231a1917' stroke-width='2.5'/><circle cx='16' cy='16' r='5' fill='%231a1917'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1917;
+  --paper: #faf9f6;
+  --warm: #f0eeea;
+  --muted: #555555;
+  --accent: #1a1917;
+  --accent-light: #f2f2f2;
+  --accent-dark: #1e3d2a;
+  --copper: #9a6b42;
+  --copper-light: #f5ede4;
+  --rule: #d8d5ce;
+  --blue: #2c5282;
+  --blue-light: #ebf0f7;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* — Layout — */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.container-wide {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* — Animations — */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawLine {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.fade-up {
+  animation: fadeUp 0.8s ease-out both;
+}
+
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.3s; }
+.delay-3 { animation-delay: 0.45s; }
+.delay-4 { animation-delay: 0.6s; }
+.delay-5 { animation-delay: 0.75s; }
+
+/* — Navigation — */
+nav {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 36px;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: color 0.2s;
+}
+
+nav a:hover { color: var(--ink); }
+
+/* — Hero — */
+.hero {
+  padding: 100px 0 80px;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 40px;
+  right: 40px;
+  height: 1px;
+  background: var(--rule);
+  animation: drawLine 1s ease-out 0.5s both;
+  transform-origin: left;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(44px, 6vw, 72px);
+  font-weight: 400;
+  line-height: 1.15;
+  max-width: 780px;
+  margin-bottom: 28px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.hero-sub {
+  font-size: 22px;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 620px;
+  margin-bottom: 40px;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 12px 28px;
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  transition: all 0.25s;
+  letter-spacing: 0.01em;
+}
+
+.hero-cta:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.hero-cta svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s;
+}
+
+.hero-cta:hover svg { transform: translateX(3px); }
+
+/* — Workflow Showcase — */
+.workflow {
+  padding: 60px 0 80px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.workflow-label {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.workflow-img-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+
+.workflow-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.workflow-caption {
+  margin-top: 16px;
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* — Pillars — */
+.pillars {
+  padding: 80px 0;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+
+.pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+.pillar {
+  padding: 40px 32px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+}
+
+.pillar-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.pillar h3 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+
+.pillar p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.pillar-tag {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.tag-green { background: var(--accent-light); color: var(--accent-dark); }
+.tag-copper { background: var(--copper-light); color: var(--copper); }
+.tag-blue { background: var(--blue-light); color: var(--blue); }
+
+/* — Research — */
+.research {
+  padding: 80px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.research-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.research-text h2 {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  line-height: 1.25;
+}
+
+.research-text p {
+  font-size: 20px;
+  color: var(--muted);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.research-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  margin-top: 8px;
+}
+
+.research-link:hover { text-decoration: underline; }
+
+.research-principles {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.research-principles li {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.research-principles li:first-child {
+  border-top: 1px solid var(--rule);
+}
+
+.principle-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.principle-text {
+  font-size: 17px;
+  color: var(--ink);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* — Founder — */
+.founder {
+  padding: 80px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.founder-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.founder-avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  background: var(--warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 56px;
+  color: var(--accent);
+}
+
+h2.founder-info {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+.founder-title {
+  font-size: 18px;
+  color: var(--copper);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.founder-bio {
+  font-size: 20px;
+  color: var(--muted);
+  line-height: 1.85;
+  margin-bottom: 16px;
+  max-width: 640px;
+}
+
+.founder-exp {
+  display: flex;
+  gap: 32px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+
+.exp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.exp-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* — Publications — */
+.publications {
+  padding: 80px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.pub-list {
+  list-style: none;
+}
+
+.pub-list li {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.pub-list li:first-child {
+  border-top: 1px solid var(--rule);
+}
+
+.pub-list .pub-title {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.pub-list .pub-journal {
+  font-style: italic;
+}
+
+/* — Contact / Footer — */
+.contact {
+  padding: 80px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+}
+
+.contact h2 {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.contact p {
+  font-size: 20px;
+  color: var(--muted);
+  line-height: 1.85;
+  margin-bottom: 8px;
+}
+
+.contact-links {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-link:hover { color: var(--copper); }
+
+.contact-link .link-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 60px;
+}
+
+footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--rule);
+}
+
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* — Responsive — */
+@media (max-width: 768px) {
+  .container, .container-wide { padding: 0 24px; }
+  .hero { padding: 60px 0 48px; }
+  .hero::after { left: 24px; right: 24px; }
+  .pillar-grid { grid-template-columns: 1fr; }
+  .research-layout { grid-template-columns: 1fr; gap: 40px; }
+  .founder-layout { grid-template-columns: 1fr; gap: 32px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  nav ul { gap: 20px; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pillar-grid { grid-template-columns: 1fr 1fr; }
+  .pillar:last-child { grid-column: 1 / -1; max-width: 50%; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="#" class="logo">QuantisMol</a>
+    <ul>
+      <li><a href="#platform">Platform</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow fade-up">Computational Drug Discovery</div>
+    <h1 class="fade-up delay-1">AI-driven ADMET intelligence for smarter drug discovery</h1>
+    <p class="hero-sub fade-up delay-2">
+      QuantisMol builds AI-powered tools that help drug discovery teams predict molecular behavior, flag development risks, and prioritize compounds with greater confidence.
+    </p>
+    <a href="#platform" class="hero-cta fade-up delay-3">
+      Explore the platform
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+  </div>
+</section>
+
+
+<section class="workflow fade-up delay-4">
+  <div class="container-wide">
+    <div class="workflow-label">How it works</div>
+    <div class="workflow-img-wrap">
+      <img src="quantismol-admet-workflow.png" alt="QuantisMol ADMET workflow — from molecular space through AI engine to absorption, distribution, metabolism, excretion, and toxicity predictions">
+    </div>
+    <p class="workflow-caption">From chemical space exploration through AI-driven prediction across all five ADMET dimensions to actionable development insights.</p>
+  </div>
+</section>
+
+
+<section class="pillars" id="platform">
+  <div class="container">
+    <div class="section-label fade-up">Core capabilities</div>
+
+    <div class="pillar-grid">
+      <div class="pillar fade-up delay-1">
+        <div class="pillar-num">01</div>
+        <h3>ADMET Prediction</h3>
+        <p>Predict absorption, distribution, metabolism, excretion, and toxicity profiles for candidate compounds using models trained on curated pharmacokinetic datasets.</p>
+        <span class="pillar-tag tag-green">Predictive Models</span>
+      </div>
+
+      <div class="pillar fade-up delay-2">
+        <div class="pillar-num">02</div>
+        <h3>Compound Prioritization</h3>
+        <p>Rank and filter molecular libraries against multi-objective criteria — balancing potency, selectivity, and developability to surface the most promising leads.</p>
+        <span class="pillar-tag tag-copper">Decision Support</span>
+      </div>
+
+      <div class="pillar fade-up delay-3">
+        <div class="pillar-num">03</div>
+        <h3>Translational Risk Analysis</h3>
+        <p>Bridge computational predictions with experimental strategy. Identify liabilities that matter for IND-enabling studies before committing to costly in vivo work.</p>
+        <span class="pillar-tag tag-blue">Translational Science</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="research" id="research">
+  <div class="container">
+    <div class="section-label fade-up">Research</div>
+    <div class="research-layout">
+      <div class="research-text fade-up delay-1">
+        <h2>Open, reproducible, benchmark-driven</h2>
+        <p>Our research program prioritizes practical utility over novelty. Every model is evaluated against real-world drug discovery scenarios, not just leaderboard metrics.</p>
+        <p>Preprints, datasets, and open-source tools will be released as the platform matures.</p>
+        <a href="https://github.com/quantismol" class="research-link">
+          View on GitHub
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+      <div class="fade-up delay-2">
+        <ul class="research-principles">
+          <li>
+            <span class="principle-num">01</span>
+            <span class="principle-text">Benchmark-first model evaluation</span>
+          </li>
+          <li>
+            <span class="principle-num">02</span>
+            <span class="principle-text">Reproducible training and inference pipelines</span>
+          </li>
+          <li>
+            <span class="principle-num">03</span>
+            <span class="principle-text">Calibrated uncertainty estimates</span>
+          </li>
+          <li>
+            <span class="principle-num">04</span>
+            <span class="principle-text">Validated on real program data</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="founder" id="team">
+  <div class="container">
+    <div class="section-label fade-up">Founder</div>
+    <div class="founder-layout">
+      <div class="founder-avatar fade-up delay-1">JY</div>
+      <div class="fade-up delay-2">
+        <h2 class="founder-info">Jingjing Yan, Ph.D.</h2>
+        <div class="founder-title">Founder, QuantisMol</div>
+        <p class="founder-bio">Industry scientist with over eight years of experience spanning DMPK, ADME, translational science, bioanalysis, and oligonucleotide therapeutics. Chemistry Ph.D. with a growing focus on computational drug discovery and ADMET prediction.</p>
+        <p class="founder-bio">Contributed to drug development programs at Eli Lilly, AstraZeneca, Glaukos, Biogen, and Medpace, with experience across experimental development, translational decision-making, external partnerships, and IND-enabling programs.</p>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="publications">
+  <div class="container">
+    <div class="section-label fade-up">Selected publications</div>
+    <ul class="pub-list fade-up delay-1">
+      <li>
+        <span class="pub-title">In vitro structure-activity relationship stability study of antisense oligonucleotide therapeutics using biological matrices and nucleases.</span> Lovrić, J.; <strong>Yan, J.</strong>; Li, X.-Q.; et al. <span class="pub-journal">Pharmacology Research &amp; Perspectives</span>, 2025, 13, e70096.
+      </li>
+      <li>
+        <span class="pub-title">Application of accelerator mass spectrometry to characterize the mass balance recovery and disposition of AZD4831.</span> Bhattacharya, C.; Sandinge, A.-S.; Bragg, R. A.; <strong>Yan, J.</strong>; et al. <span class="pub-journal">Drug Metabolism &amp; Disposition</span>, 2023, 51, 451.
+      </li>
+      <li>
+        <span class="pub-title">MOF decomposition and introduction of repairable defects using a photodegradable strut.</span> <strong>Yan, J.</strong>; MacDonald, J.; Burdette, S. <span class="pub-journal">Chemistry — A European Journal</span>, 2019, 25, 8393.
+      </li>
+      <li>
+        <span class="pub-title">Detection of adsorbates on emissive MOF surfaces with X-ray photoelectron spectroscopy.</span> <strong>Yan, J.</strong>; Carl, A. D.; Maag, A. R.; et al. <span class="pub-journal">Dalton Transactions</span>, 2019, 48, 4520.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-label fade-up">Get in touch</div>
+    <div class="contact-grid">
+      <div class="fade-up delay-1">
+        <h2>Let's work together</h2>
+        <p>Interested in early access, research collaboration, or integrating ADMET prediction into your pipeline? We'd like to hear from you.</p>
+      </div>
+      <div class="contact-links fade-up delay-2">
+        <a href="mailto:jyan@quantismol.com" class="contact-link">
+          <span class="link-label">Email</span>
+          jyan@quantismol.com
+        </a>
+        <a href="https://linkedin.com/in/jingjing-yan-46868258" class="contact-link">
+          <span class="link-label">LinkedIn</span>
+          Jingjing Yan
+        </a>
+        <a href="https://github.com/quantismol" class="contact-link">
+          <span class="link-label">GitHub</span>
+          github.com/quantismol
+        </a>
+        <div class="contact-link">
+          <span class="link-label">Location</span>
+          Aliso Viejo, California
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 QuantisMol LLC. All rights reserved.</p>
+    <p>Aliso Viejo, CA</p>
+  </div>
+</footer>
+
+</body>
+</html>
